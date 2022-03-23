@@ -1,0 +1,18 @@
+0         SUM        START      0
+0         FIRST      LDX        #0                LOAD X REGISTER WITH 0
+3                    LDA        #0                LOAD ACCUMULATOR WITH 0
+6         LOOP       ADD        TABLE, X
+9                    ADD        TABLE2, X
+c                   TIX        COUNT
+f                   JLT        LOOP
+12                   RSUB                         RETURN TO CALLER
+15                   LDA        C'EOFHYT'
+18                   LDA        X'0512'
+1b                   LDA        C'EOFJH'
+1e                   LDA        X'0512'
+21                   LDA        X'0512'
+24        COUNT      RESB       1
+25        TABLE      RESW       2000              2000-WORD TABLE AREA
+1795      TABLE2     RESW       2000              2000-WORD TABLE2 AREA
+2f05     TOTAL      RESW       1
+                     END        FIRST

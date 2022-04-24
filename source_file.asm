@@ -1,21 +1,39 @@
-SUM        START      0
-FIRST      LDX        #0                LOAD X REGISTER WITH 0
-           LDA        #0                LOAD ACCUMULATOR WITH 0
-LOOP       ADD        TABLE, X
-           ADD        TABLE2, X
-           TIX        COUNT
-           JLT        LOOP
-           RSUB                         RETURN TO CALLER
-           LDA        C'EOFHYT'
-           LDA        X'0512'
-.
-. This is a comment
-.
-           LDA        C'EOFJH'
-           LDA        X'0512'
-           LDA        X'0512'
-COUNT      RESB       1
-TABLE      RESW       2000              2000-WORD TABLE AREA
-TABLE2     RESW       2000              2000-WORD TABLE2 AREA
-TOTAL      RESW       1
-           END        FIRST
+COPY        START      0000
+FIRST       STL        RETADR            SAVE RETURN ADDRESS
+CLOOP       JSUB       RDREC
+            LDA        LENGTH            TEST FOR EOF
+            COMP       ZERO
+            JEQ        ENDFIL
+            JSUB       RDREC
+            J          CLOOP
+ENDFIL      LDA        C'EOF'
+            LDA        X'F1'
+            STA        BUFFER
+            LDA        THREE
+            STA        LENGTH
+            JSUB       RDREC
+            LDL        RETADR
+            RSUB
+EOF         BYTE       C'EOF'
+THREE       WORD       3
+ZERO        WORD       0
+RETADR      RESW       1
+LENGTH      RESW       1
+BUFFER      RESB       4096
+.           SUBROUTINE TO READ RECORD INTO BUFFER
+RDREC       LDX        ZERO
+            LDA        ZERO
+            LDA        X'F2'
+RLOOP       TD         INPUT
+            JEQ        RLOOP
+            RD         INPUT
+            COMP       ZERO
+            JEQ        EXIT
+            STCH       BUFFER,X
+            TIX        LENGTH
+            JLT        RLOOP
+EXIT        STX        LENGTH
+INPUT       BYTE       X'F1'
+            RSUB
+            RSUB
+            END        FIRST

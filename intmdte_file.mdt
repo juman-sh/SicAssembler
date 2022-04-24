@@ -1,18 +1,38 @@
-0         SUM        START      0
-0         FIRST      LDX        #0                LOAD X REGISTER WITH 0
-3                    LDA        #0                LOAD ACCUMULATOR WITH 0
-6         LOOP       ADD        TABLE, X
-9                    ADD        TABLE2, X
-c                   TIX        COUNT
-f                   JLT        LOOP
-12                   RSUB                         RETURN TO CALLER
-15                   LDA        C'EOFHYT'
-18                   LDA        X'0512'
-1b                   LDA        C'EOFJH'
-1e                   LDA        X'0512'
-21                   LDA        X'0512'
-24        COUNT      RESB       1
-25        TABLE      RESW       2000              2000-WORD TABLE AREA
-1795      TABLE2     RESW       2000              2000-WORD TABLE2 AREA
-2f05     TOTAL      RESW       1
-                     END        FIRST
+0         COPY        START      0000
+0         FIRST       STL        RETADR            SAVE RETURN ADDRESS
+3         CLOOP       JSUB       RDREC
+6                     LDA        LENGTH            TEST FOR EOF
+9                     COMP       ZERO
+c                    JEQ        ENDFIL
+f                    JSUB       RDREC
+12                    J          CLOOP
+15        ENDFIL      LDA        C'EOF'
+18                    LDA        X'F1'
+1b                    STA        BUFFER
+1e                    LDA        THREE
+21                    STA        LENGTH
+24                    JSUB       RDREC
+27                    LDL        RETADR
+2a                    RSUB
+2d        EOF         BYTE       C'EOF'
+30        THREE       WORD       3
+33        ZERO        WORD       0
+36        RETADR      RESW       1
+39        LENGTH      RESW       1
+3c        BUFFER      RESB       4096
+103c      RDREC       LDX        ZERO
+103f                  LDA        ZERO
+1042                  LDA        X'F2'
+1045      RLOOP       TD         INPUT
+1048                  JEQ        RLOOP
+104b                  RD         INPUT
+104e                  COMP       ZERO
+1051                  JEQ        EXIT
+1054                  STCH       BUFFER,X
+1057                  TIX        LENGTH
+105a                  JLT        RLOOP
+105d      EXIT        STX        LENGTH
+1060      INPUT       BYTE       X'F1'
+1061                  RSUB
+1064                  RSUB
+                      END        FIRST

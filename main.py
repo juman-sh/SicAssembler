@@ -18,6 +18,8 @@ dire = ["START", "BYTE", "RESB", "WORD", "RESW", "END"]
 intfile = open("intmdte_file.mdt", "w+")
 symFile = open("SYMTAB.txt", "w+")
 ErrorFile = open("Error.txt", "w+")
+ErrorFile = open("Error.txt","w+")
+
 
 # open OPTAP file to read it
 opfile = open("OPTAB.txt", "r")
